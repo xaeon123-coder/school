@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f5e6b">
+<title>학교설명회 전자서명</title>
+<style>
+  :root {
+    --main: #0f5e6b;
+    --main-dark: #0a4650;
+    --bg: #f3f6f7;
+    --card: #ffffff;
+    --text: #1d2b2f;
+    --sub: #6b7c82;
+    --line: #dbe3e6;
+    --danger: #c0392b;
+    --ok: #1e8e5a;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 20px 16px 48px; }
+  header.hero { text-align: center; padding: 12px 0 18px; }
+  .hero .eyebrow { font-size: 12px; letter-spacing: .18em; color: var(--main); font-weight: 700; }
+  .hero h1 { margin: 6px 0 4px; font-size: 24px; line-height: 1.3; }
+  .hero p { margin: 0; color: var(--sub); font-size: 14px; }
+  .notice {
+    background: #e8f3f5; border: 1px solid #c6e0e5; color: #0a4650;
+    border-radius: 12px; padding: 12px 14px; font-size: 14px; margin-bottom: 14px; white-space: pre-line;
+  }
+  .card {
+    background: var(--card); border-radius: 16px; padding: 18px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06); border: 1px solid var(--line);
+  }
+  label.field { display: block; font-weight: 700; font-size: 14px; margin: 0 0 6px; }
+  .field-wrap { margin-bottom: 16px; }
+  .hint { font-size: 12px; color: var(--sub); margin-top: 6px; }
+  select, input[type=text], input[type=password], input[type=datetime-local], textarea {
+    width: 100%; font-size: 17px; padding: 13px 12px; border-radius: 10px;
+    border: 1.5px solid var(--line); background: #fff; color: var(--text);
+    appearance: none; -webkit-appearance: none; font-family: inherit;
+  }
+  textarea { resize: vertical; min-height: 90px; font-size: 15px; line-height: 1.5; }
+  select {
+    background-image: linear-gradient(45deg, transparent 50%, #6b7c82 50%), linear-gradient(135deg, #6b7c82 50%, transparent 50%);
+    background-position: calc(100% - 20px) 55%, calc(100% - 14px) 55%;
+    background-size: 6px 6px, 6px 6px; background-repeat: no-repeat; padding-right: 36px;
+  }
+  select:focus, input:focus, textarea:focus { outline: none; border-color: var(--main); box-shadow: 0 0 0 3px rgba(15,94,107,.15); }
+  .seg { display: flex; gap: 8px; }
+  .seg label { flex: 1; position: relative; display: block; }
+  .seg input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+  .seg span {
+    display: block; text-align: center; padding: 13px 8px; border: 1.5px solid var(--line); border-radius: 10px;
+    font-size: 17px; font-weight: 700; color: var(--sub); background: #fff;
+  }
+  .seg input:checked + span { background: var(--main); color: #fff; border-color: var(--main); }
+  .seg input:focus-visible + span { box-shadow: 0 0 0 3px rgba(15,94,107,.25); }
+  .pad-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .pad-head .field { margin: 0; }
+  .link-btn { background: none; border: none; color: var(--main); font-size: 14px; font-weight: 700; padding: 6px 4px; cursor: pointer; font-family: inherit; }
+  .pad-box {
+    position: relative; border: 1.5px dashed #9db4ba; border-radius: 12px; background: #fcfdfd;
+    height: 190px; overflow: hidden;
+  }
+  .pad-box canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
+  .pad-hint {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: #a7b8bd; pointer-events: none; font-size: 15px; transition: opacity .15s;
+  }
+  .pad-hint small { letter-spacing: .3em; font-size: 11px; margin-top: 4px; }
+  .pad-box.inked .pad-hint { opacity: 0; }
+  .pad-line { position: absolute; left: 14px; right: 14px; bottom: 44px; border-bottom: 1px solid #dfe8ea; pointer-events: none; }
+  .btn {
+    display: block; width: 100%; border: none; border-radius: 12px; padding: 15px;
+    font-size: 17px; font-weight: 700; background: var(--main); color: #fff; cursor: pointer; font-family: inherit;
+  }
+  .btn:hover { background: var(--main-dark); }
+  .btn:disabled { background: #9db4ba; cursor: default; }
+  .btn.ghost { background: #fff; color: var(--main); border: 1.5px solid var(--main); }
+  .btn.ghost:hover { background: #eef6f7; }
+  .btn.small { display: inline-block; width: auto; padding: 9px 14px; font-size: 14px; border-radius: 9px; }
+  .btn.danger { background: var(--danger); }
+  .btn.danger.ghost { background: #fff; color: var(--danger); border-color: var(--danger); }
+  .err { color: var(--danger); font-size: 14px; min-height: 20px; margin: 10px 2px 0; }
+  .center { text-align: center; }
+  .big-icon { font-size: 56px; margin: 8px 0; }
+  .muted { color: var(--sub); font-size: 14px; }
+  .foot { text-align: center; margin-top: 22px; }
+  .foot button { background: none; border: none; color: #94a5aa; font-size: 12px; cursor: pointer; padding: 8px; font-family: inherit; }
+  .hidden { display: none !important; }
+
+  /* modal */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(15,30,35,.55); display: flex; align-items: center; justify-content: center;
+    padding: 16px; z-index: 50; overflow-y: auto;
+  }
+  .modal { background: #fff; border-radius: 16px; padding: 20px; width: 100%; max-width: 380px; }
+  .modal h3 { margin: 0 0 8px; }
+  .modal .row { display: flex; gap: 8px; margin-top: 14px; }
+  .modal .row .btn { padding: 12px; font-size: 16px; }
+  .opt-group { margin: 14px 0 0; }
+  .opt-group .opt-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .opt-group label { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 15px; }
+  .opt-group label.disabled { color: #a7b8bd; }
+  .opt-group input { width: 18px; height: 18px; accent-color: var(--main); }
+
+  /* admin */
+  .admin-wrap { max-width: 900px; margin: 0 auto; padding: 16px 14px 60px; }
+  .admin-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+  .admin-bar h2 { margin: 0 auto 0 0; font-size: 20px; }
+  .tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--line); margin-bottom: 14px; }
+  .tab {
+    background: none; border: none; padding: 10px 16px; font-size: 15px; font-weight: 700; color: var(--sub);
+    cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; font-family: inherit;
+  }
+  .tab.on { color: var(--main); border-bottom-color: var(--main); }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
+  .toolbar select { width: auto; font-size: 14px; padding: 9px 30px 9px 10px; }
+  .toolbar .spacer { margin-left: auto; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; }
+  .chip {
+    border: 1.5px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 12px;
+    font-size: 13px; cursor: pointer; font-family: inherit; color: var(--text);
+  }
+  .chip.on { background: var(--main); color: #fff; border-color: var(--main); }
+  .chip b { margin-left: 6px; font-weight: 700; opacity: .85; }
+  .missing { background: #fff7e6; border: 1px solid #f3dca8; border-radius: 12px; padding: 10px 14px; font-size: 14px; margin-bottom: 12px; }
+  .missing b { color: #8a5a00; }
+  .table-scroll { overflow-x: auto; background: #fff; border-radius: 12px; border: 1px solid var(--line); }
+  table.list { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.list th, table.list td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+  table.list th { background: #f0f5f6; font-size: 13px; }
+  table.list img { height: 38px; display: block; }
+  .panel { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-bottom: 14px; }
+  .panel h3 { margin: 0 0 4px; font-size: 16px; }
+  .panel .desc { color: var(--sub); font-size: 13px; margin: 0 0 12px; }
+  .form-row { margin-bottom: 14px; }
+  .form-row > label.lab { display: block; font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+  .form-row input[type=text], .form-row input[type=password], .form-row input[type=datetime-local], .form-row textarea { font-size: 15px; padding: 10px 12px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 520px) { .grid2 { grid-template-columns: 1fr; } }
+  .check { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; font-size: 15px; }
+  .check input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--main); flex: none; }
+  .check small { display: block; color: var(--sub); font-size: 12px; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .file-btn { position: relative; overflow: hidden; }
+  .file-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; font-size: 0; }
+  .preview { background: #f0f5f6; border-radius: 10px; padding: 10px 12px; font-size: 13px; margin-top: 10px; white-space: pre-line; }
+  .qr-box { display: flex; justify-content: center; padding: 10px 0; }
+  .url-box { word-break: break-all; font-size: 12px; background: #f0f5f6; border-radius: 8px; padding: 8px; color: var(--sub); }
+
+  /* print */
+  #printArea { display: none; }
+  @media print {
+    @page { size: A4; margin: 14mm; }
+    body { background: #fff; }
+    body > *:not(#printArea) { display: none !important; }
+    #printArea { display: block; color: #000; font-size: 11pt; }
+    .p-page { page-break-after: always; }
+    .p-page:last-child { page-break-after: auto; }
+    .p-page h1 { font-size: 19pt; margin: 0 0 4pt; text-align: center; }
+    .p-page .p-sub { text-align: center; margin-bottom: 12pt; font-size: 11pt; }
+    .p-page .p-school { font-size: 14pt; font-weight: 700; margin-bottom: 2pt; }
+    .p-page .p-rate { font-size: 10.5pt; margin-bottom: 6pt; color: #333; }
+    table.p-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    table.p-table th, table.p-table td { border: 1px solid #000; padding: 3pt 4pt; text-align: center; overflow: hidden; }
+    table.p-table tr { page-break-inside: avoid; }
+    table.p-table td.sig { height: 30pt; padding: 1pt; }
+    table.p-table td.sig img { max-height: 26pt; max-width: 100%; }
+    table.p-table td.extra small { display: block; font-size: 7.5pt; color: #444; }
+    .p-total { text-align: right; margin-top: 8pt; font-size: 10.5pt; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== 서명 화면 ===== -->
+<div id="viewSign" class="wrap">
+  <header class="hero">
+    <div class="eyebrow">DIGITAL SIGNATURE</div>
+    <h1 id="title">학교설명회 전자서명</h1>
+    <p id="subtitle">서명등록부</p>
+  </header>
+
+  <div id="notice" class="notice hidden"></div>
+
+  <div id="loading" class="card center muted">불러오는 중...</div>
+
+  <div id="setupError" class="card center hidden">
+    <div class="big-icon">🔧</div>
+    <h3>서버 연결이 필요해요</h3>
+    <p class="muted">index.html 안의 <b>API_URL</b>에 웹앱 주소를 붙여 넣거나,<br>주소 뒤에 <b>?s=배포ID</b>를 붙여 접속해 주세요.</p>
+  </div>
+
+  <div id="closedCard" class="card center hidden">
+    <div class="big-icon">⏰</div>
+    <h3>지금은 서명할 수 없어요</h3>
+    <p class="muted" id="closedMsg"></p>
+  </div>
+
+  <form id="signForm" class="card hidden" autocomplete="off">
+    <div class="field-wrap" id="typeField">
+      <label class="field">구분</label>
+      <div class="seg">
+        <label><input type="radio" name="stype" value="학생"><span>학생</span></label>
+        <label><input type="radio" name="stype" value="학부모"><span>학부모</span></label>
+      </div>
+    </div>
+    <div class="field-wrap">
+      <label class="field" for="school">학교</label>
+      <select id="school" required>
+        <option value="">— 학교를 선택해 주세요 —</option>
+      </select>
+    </div>
+    <div class="field-wrap">
+      <label class="field" for="name">성명</label>
+      <input type="text" id="name" maxlength="20" placeholder="이름을 입력해 주세요" required>
+      <div class="hint hidden" id="rosterHint">미리 등록된 참석자 명단에 있는 이름만 서명할 수 있어요.</div>
+    </div>
+    <div class="field-wrap">
+      <div class="pad-head">
+        <label class="field">서명</label>
+        <button type="button" class="link-btn" id="clearPad">지우고 다시</button>
+      </div>
+      <div class="pad-box" id="padBox">
+        <canvas id="pad"></canvas>
+        <div class="pad-line"></div>
+        <div class="pad-hint">여기에 손가락이나 펜으로 서명해 주세요<small>SIGNATURE</small></div>
+      </div>
+    </div>
+    <button type="submit" class="btn" id="submitBtn">서명 제출하기</button>
+    <div class="err" id="formErr"></div>
+  </form>
+
+  <div id="doneCard" class="card center hidden">
+    <div class="big-icon" style="color:var(--ok)">✅</div>
+    <h3 style="margin:0 0 6px">서명이 완료되었어요</h3>
+    <p class="muted" id="doneMsg"></p>
+    <button class="btn ghost" id="nextBtn" style="margin-top:14px">다음 분 서명하기</button>
+  </div>
+
+  <div class="foot"><button id="adminLink">관리자</button></div>
+</div>
+
+<!-- ===== 관리자 로그인 ===== -->
+<div id="loginModal" class="overlay hidden">
+  <div class="modal">
+    <h3>관리자 확인</h3>
+    <p class="muted" style="margin:0 0 10px">관리자 비밀번호를 입력해 주세요.</p>
+    <input type="password" id="pin" placeholder="비밀번호" autocomplete="off">
+    <div class="err" id="loginErr"></div>
+    <div class="row">
+      <button class="btn ghost" id="loginCancel">취소</button>
+      <button class="btn" id="loginOk">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 관리자 화면 ===== -->
+<div id="viewAdmin" class="admin-wrap hidden">
+  <div class="admin-bar">
+    <h2>관리자</h2>
+    <button class="btn small ghost" id="btnQr">공유 QR</button>
+    <button class="btn small ghost" id="btnRefresh">새로고침</button>
+    <button class="btn small ghost" id="btnAdminClose">닫기</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" data-tab="Records">서명 기록</button>
+    <button class="tab" data-tab="Roster">명단 · 학교</button>
+    <button class="tab" data-tab="Settings">설정</button>
+  </div>
+
+  <!-- 탭: 서명 기록 -->
+  <div id="tabRecords">
+    <div class="toolbar">
+      <span class="muted">날짜</span>
+      <select id="dateSel"></select>
+      <span class="muted" id="totalText"></span>
+      <button class="btn small spacer" id="btnPrint">등록부 인쇄</button>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div class="missing hidden" id="missingBox"></div>
+    <div class="table-scroll">
+      <table class="list">
+        <thead><tr><th>번호</th><th>구분</th><th>학교</th><th>성명</th><th>서명</th><th>시각</th><th></th></tr></thead>
+        <tbody id="listBody"></tbody>
+      </table>
+    </div>
+    <p class="muted">학교 칩을 누르면 해당 학교만 보이고, 그 상태에서 인쇄하면 그 학교 등록부만 출력돼요. 칩의 <b>서명 수/명단 수</b>는 엑셀로 명단을 등록했을 때 나타나요.</p>
+  </div>
+
+  <!-- 탭: 명단 · 학교 -->
+  <div id="tabRoster" class="hidden">
+    <div class="panel">
+      <h3>엑셀로 참석자 명단 등록</h3>
+      <p class="desc">엑셀(.xlsx/.xls) 또는 CSV(UTF-8) 파일의 <b>첫 번째 시트</b>에서 <b>학교</b>, <b>성명</b> 두 열을 읽어요. 명단에 처음 나온 학교는 학교 목록에 자동으로 추가돼요.</p>
+      <div class="btn-row">
+        <button class="btn small ghost" id="btnTemplate">엑셀 양식 내려받기</button>
+        <span class="btn small file-btn">파일 선택<input type="file" id="xlsFile" accept=".xlsx,.xls,.csv"></span>
+      </div>
+      <div class="preview hidden" id="importPreview"></div>
+      <div class="opt-group hidden" id="importMode">
+        <label><input type="radio" name="imode" value="append" checked> 기존 명단에 추가 (같은 학교·같은 이름은 건너뜀)</label>
+        <label><input type="radio" name="imode" value="replace"> 기존 명단을 지우고 이 파일로 대체</label>
+        <div style="margin-top:8px"><button class="btn small" id="btnImport">명단 등록하기</button></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>등록된 명단</h3>
+      <p class="desc" id="rosterSummaryText"></p>
+      <div class="table-scroll">
+        <table class="list">
+          <thead><tr><th>학교</th><th>명단 인원</th></tr></thead>
+          <tbody id="rosterBody"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:10px"><button class="btn small danger ghost" id="btnRosterClear">명단 전체 삭제</button></div>
+    </div>
+
+    <div class="panel">
+      <h3>학교 목록</h3>
+      <p class="desc">서명 화면의 학교 선택 목록이에요. 한 줄에 한 학교씩 적어 주세요.</p>
+      <textarea id="schoolsBox" rows="8"></textarea>
+      <div style="margin-top:10px"><button class="btn small" id="btnSchoolsSave">학교 목록 저장</button></div>
+    </div>
+  </div>
+
+  <!-- 탭: 설정 -->
+  <div id="tabSettings" class="hidden">
+    <div class="panel">
+      <h3>화면 문구</h3>
+      <div class="form-row"><label class="lab" for="setTitle">행사명</label><input type="text" id="setTitle" maxlength="60"></div>
+      <div class="form-row"><label class="lab" for="setSubtitle">부제</label><input type="text" id="setSubtitle" maxlength="60"></div>
+      <div class="form-row"><label class="lab" for="setNotice">안내문 (서명 화면 위 배너, 비우면 표시 안 함)</label><textarea id="setNotice" rows="3" maxlength="300"></textarea></div>
+    </div>
+    <div class="panel">
+      <h3>서명 가능 시간</h3>
+      <p class="desc">설정한 시간에만 서명할 수 있어요. 비워 두면 제한이 없어요. (한국 시간 기준)</p>
+      <div class="grid2">
+        <div class="form-row"><label class="lab" for="setStart">시작</label><input type="datetime-local" id="setStart"></div>
+        <div class="form-row"><label class="lab" for="setEnd">종료</label><input type="datetime-local" id="setEnd"></div>
+      </div>
+      <button class="link-btn" id="btnClearTime" type="button">시간 제한 지우기</button>
+    </div>
+    <div class="panel">
+      <h3>서명 규칙</h3>
+      <label class="check"><input type="checkbox" id="setTypeSelect"><span>학생/학부모 구분 선택<small>서명할 때 ‘학생’ 또는 ‘학부모’를 고르게 해요. 끄면 구분 없이 서명하고, 이미 받은 구분 기록은 그대로 남아요.</small></span></label>
+      <label class="check"><input type="checkbox" id="setDup"><span>중복 서명 차단<small>같은 날 같은 학교·같은 이름은 한 번만 서명할 수 있어요. 동명이인이 올 수 있으면 끄세요.</small></span></label>
+      <label class="check"><input type="checkbox" id="setRosterCheck"><span>명단에 있는 이름만 서명 허용<small>‘명단 · 학교’ 탭에서 등록한 명단과 일치해야 서명돼요. (공백 차이는 무시)</small></span></label>
+    </div>
+    <div class="panel">
+      <h3>관리자 비밀번호 변경</h3>
+      <div class="form-row"><input type="password" id="setNewPin" placeholder="새 비밀번호 (4자 이상, 바꾸지 않으려면 비워 두세요)" autocomplete="new-password"></div>
+    </div>
+    <button class="btn" id="btnSettingsSave">설정 저장</button>
+    <div class="err" id="settingsErr"></div>
+  </div>
+</div>
+
+<!-- ===== 인쇄 옵션 모달 ===== -->
+<div id="printModal" class="overlay hidden">
+  <div class="modal">
+    <h3>서명등록부 출력</h3>
+    <div class="muted" id="printScope"></div>
+
+    <div class="opt-group">
+      <div class="opt-title">출력 내용</div>
+      <label><input type="radio" name="pmode" value="signed" checked> 서명한 사람만</label>
+      <label id="lblRosterMode"><input type="radio" name="pmode" value="roster"> 명단 전체 (미서명자는 서명란 비움)</label>
+    </div>
+    <div class="opt-group">
+      <div class="opt-title">표 열 수</div>
+      <label><input type="radio" name="pcols" value="1"> 1열</label>
+      <label><input type="radio" name="pcols" value="2" checked> 2열 (기본)</label>
+    </div>
+    <div class="opt-group">
+      <div class="opt-title">정렬</div>
+      <label><input type="radio" name="psort" value="time" checked> 서명한 순서 (명단 전체는 명단 순서)</label>
+      <label><input type="radio" name="psort" value="name"> 이름 가나다순</label>
+    </div>
+    <div class="opt-group">
+      <label><input type="checkbox" id="pRate" checked> 서명률 표시 (명단이 있는 학교만)</label>
+    </div>
+    <div class="row">
+      <button class="btn ghost" id="printCancel">취소</button>
+      <button class="btn" id="printGo">인쇄하기</button>
+    </div>
+    <p class="hint">PC에서는 ‘PDF로 저장’을 선택하면 파일로 보관할 수 있어요.</p>
+  </div>
+</div>
+
+<!-- ===== QR 모달 ===== -->
+<div id="qrModal" class="overlay hidden">
+  <div class="modal center">
+    <h3>공유 QR / 링크</h3>
+    <div class="qr-box"><div id="qrcode"></div></div>
+    <div class="url-box" id="qrUrl"></div>
+    <div class="row">
+      <button class="btn ghost" id="qrCopy">링크 복사</button>
+      <button class="btn" id="qrClose">닫기</button>
+    </div>
+  </div>
+</div>
+
+<div id="printArea"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+/* =========================================================
+   설정: 구글 Apps Script 웹앱 주소(…/exec)를 아래에 붙여 넣으세요.
+   또는 접속 주소 뒤에 ?s=배포ID 를 붙여도 됩니다.
+   ========================================================= */
+const API_URL_DEFAULT = "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnTXYSiacfIQzBObnUic7dS_vrzxzH0cbqOsQc7yDN1yMwdYDUJY0oEjtBBQ93zwP-iskVBpyEwFsfrEQz5o8xa2thn5lg5hKNzyulQgv7-UuYEipcrfxcEdfKr_wBWppKZyP5LIAfJkrUkPhzrsS2oWzpatTvu-vtHUuQmR8A_Qs7SysoAYvkBff2FvGV3nvpqOwDQ3zKkRzBGsWxunc-yiLg_DMhrq1hYZ8f1UX_RuPUwHgXE9QqAVn4wDuAg2T_ziP7hzkns12GJRyJQbwt3QbVXQjQ&lib=M5eVdZ3gzpUOil4eAhTR3Q3z4oH7BmHwT";
+
+const API_URL = (function () {
+  const p = new URLSearchParams(location.search).get("s");
+  if (p) return p.indexOf("http") === 0 ? p : "https://script.google.com/macros/s/" + p + "/exec";
+  return API_URL_DEFAULT;
+})();
+const API_READY = API_URL.indexOf("script.google.com") !== -1 || API_URL.indexOf("script.googleusercontent.com") !== -1;
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const show = (el) => el.classList.remove("hidden");
+const hide = (el) => el.classList.add("hidden");
+const norm = (s) => String(s == null ? "" : s).replace(/\s+/g, "");
+const isImg = (s) => typeof s === "string" && s.indexOf("data:image/") === 0;
+
+let CONFIG = null;
+
+/* ---------- 서버 통신 ---------- */
+async function apiGet(action) {
+  const res = await fetch(API_URL + "?action=" + encodeURIComponent(action), { redirect: "follow" });
+  return res.json();
+}
+async function apiPost(payload) {
+  // Content-Type을 지정하지 않으면 text/plain 으로 전송되어 CORS 사전요청이 생기지 않아요.
+  const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload), redirect: "follow" });
+  return res.json();
+}
+
+/* ---------- 초기 로딩 ---------- */
+async function init() {
+  if (!API_READY) {
+    hide($("loading")); show($("setupError"));
+    return;
+  }
+  try {
+    CONFIG = await apiGet("config");
+    if (!CONFIG || !CONFIG.ok) throw new Error((CONFIG && CONFIG.error) || "설정을 불러오지 못했어요");
+    applyConfig();
+  } catch (e) {
+    hide($("loading"));
+    $("closedMsg").textContent = "연결에 문제가 있어요. 잠시 후 다시 시도해 주세요. (" + e.message + ")";
+    show($("closedCard"));
+  }
+}
+
+function applyConfig() {
+  hide($("loading"));
+  $("title").textContent = CONFIG.title || "학교설명회 전자서명";
+  $("subtitle").textContent = CONFIG.subtitle || "서명등록부";
+  document.title = CONFIG.title || "학교설명회 전자서명";
+  if (CONFIG.notice) { $("notice").textContent = CONFIG.notice; show($("notice")); } else { hide($("notice")); }
+  if (CONFIG.rosterCheck) show($("rosterHint")); else hide($("rosterHint"));
+  if (CONFIG.useType !== false) show($("typeField")); else hide($("typeField"));
+
+  const sel = $("school");
+  const keep = sel.value;
+  sel.innerHTML = '<option value="">— 학교를 선택해 주세요 —</option>';
+  (CONFIG.schools || []).forEach((s) => {
+    const o = document.createElement("option");
+    o.value = s; o.textContent = s; sel.appendChild(o);
+  });
+  if (keep && (CONFIG.schools || []).indexOf(keep) !== -1) sel.value = keep;
+
+  if (!CONFIG.open) {
+    $("closedMsg").textContent = CONFIG.closedMsg || "서명 가능 시간이 아니에요.";
+    show($("closedCard")); hide($("signForm"));
+  } else {
+    hide($("closedCard"));
+    if ($("doneCard").classList.contains("hidden")) show($("signForm"));
+    requestAnimationFrame(resizePad);
+  }
+}
+
+/* ---------- 서명 패드 ---------- */
+const pad = $("pad");
+const ctx = pad.getContext("2d");
+let drawing = false, hasInk = false, last = null, padW = 0;
+
+function resizePad() {
+  const r = pad.getBoundingClientRect();
+  if (!r.width) return;
+  if (Math.round(r.width) === padW && pad.width) return; // 너비가 같으면 지우지 않음
+  padW = Math.round(r.width);
+  const dpr = window.devicePixelRatio || 1;
+  pad.width = r.width * dpr; pad.height = r.height * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.lineWidth = 2.6; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.strokeStyle = "#10243a"; ctx.fillStyle = "#10243a";
+  hasInk = false; $("padBox").classList.remove("inked");
+}
+function clearPad() {
+  const r = pad.getBoundingClientRect();
+  ctx.clearRect(0, 0, r.width, r.height);
+  hasInk = false; $("padBox").classList.remove("inked");
+}
+function pos(e) { const r = pad.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+
+pad.addEventListener("pointerdown", (e) => {
+  e.preventDefault();
+  pad.setPointerCapture(e.pointerId);
+  drawing = true; last = pos(e);
+  ctx.beginPath(); ctx.arc(last.x, last.y, 1.3, 0, Math.PI * 2); ctx.fill();
+  hasInk = true; $("padBox").classList.add("inked");
+});
+pad.addEventListener("pointermove", (e) => {
+  if (!drawing) return;
+  e.preventDefault();
+  const p = pos(e);
+  ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(p.x, p.y); ctx.stroke();
+  last = p;
+});
+["pointerup", "pointercancel", "pointerleave"].forEach((ev) => pad.addEventListener(ev, () => { drawing = false; }));
+window.addEventListener("resize", resizePad);
+$("clearPad").addEventListener("click", clearPad);
+
+function exportSig() {
+  const r = pad.getBoundingClientRect();
+  const w = 360, h = Math.round(w * r.height / r.width);
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  const x = c.getContext("2d");
+  x.drawImage(pad, 0, 0, w, h);
+  let url = c.toDataURL("image/png");
+  if (url.length > 45000) { // 시트 셀 한도(5만자) 보호: 흰 배경 JPEG로 대체
+    x.globalCompositeOperation = "destination-over";
+    x.fillStyle = "#fff"; x.fillRect(0, 0, w, h);
+    url = c.toDataURL("image/jpeg", 0.6);
+  }
+  return url;
+}
+
+/* ---------- 제출 ---------- */
+$("signForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const err = $("formErr"); err.textContent = "";
+  const school = $("school").value;
+  const name = $("name").value.trim();
+  const useType = !CONFIG || CONFIG.useType !== false;
+  const typeEl = document.querySelector('input[name="stype"]:checked');
+  const type = useType && typeEl ? typeEl.value : "";
+  if (useType && !type) { err.textContent = "학생 또는 학부모를 선택해 주세요."; return; }
+  if (!school) { err.textContent = "학교를 선택해 주세요."; return; }
+  if (!name) { err.textContent = "이름을 입력해 주세요."; return; }
+  if (!hasInk) { err.textContent = "서명란에 서명해 주세요."; return; }
+
+  const btn = $("submitBtn"); btn.disabled = true; btn.textContent = "제출 중...";
+  try {
+    const res = await apiPost({ action: "sign", school: school, name: name, type: type, sig: exportSig() });
+    if (res.ok) {
+      $("doneMsg").textContent = (type ? type + " · " : "") + school + " · " + name + " 님의 서명이 접수되었어요.";
+      hide($("signForm")); show($("doneCard"));
+    } else {
+      err.textContent = res.error || "제출에 실패했어요. 다시 시도해 주세요.";
+    }
+  } catch (ex) {
+    err.textContent = "네트워크 문제로 제출하지 못했어요. 잠시 후 다시 시도해 주세요.";
+  }
+  btn.disabled = false; btn.textContent = "서명 제출하기";
+});
+
+$("nextBtn").addEventListener("click", async () => {
+  $("name").value = ""; $("school").value = ""; $("formErr").textContent = "";
+  document.querySelectorAll('input[name="stype"]').forEach((r) => { r.checked = false; });
+  hide($("doneCard")); show($("signForm"));
+  padW = 0; resizePad(); clearPad();
+  try { CONFIG = await apiGet("config"); applyConfig(); } catch (e) { /* 무시 */ }
+});
+
+/* =========================================================
+   관리자
+   ========================================================= */
+let ADMIN_PIN = "";
+let RECORDS = [];
+let ROSTER = [];
+let SETTINGS = {};
+let SCHOOLS = [];
+let FILTER_SCHOOL = "";
+let IMPORT_ROWS = [];
+
+$("adminLink").addEventListener("click", () => {
+  if (!API_READY) return;
+  $("pin").value = ""; $("loginErr").textContent = ""; show($("loginModal")); $("pin").focus();
+});
+$("loginCancel").addEventListener("click", () => hide($("loginModal")));
+$("pin").addEventListener("keydown", (e) => { if (e.key === "Enter") $("loginOk").click(); });
+$("loginOk").addEventListener("click", async () => {
+  const pin = $("pin").value;
+  if (!pin) { $("loginErr").textContent = "비밀번호를 입력해 주세요."; return; }
+  $("loginOk").disabled = true;
+  try {
+    const res = await apiPost({ action: "list", pin: pin });
+    if (res.ok) {
+      ADMIN_PIN = pin; hide($("loginModal")); openAdmin(res);
+    } else {
+      $("loginErr").textContent = res.error || "비밀번호가 맞지 않아요.";
+    }
+  } catch (e) {
+    $("loginErr").textContent = "연결에 실패했어요.";
+  }
+  $("loginOk").disabled = false;
+});
+
+function openAdmin(res) {
+  loadAdmin(res, true);
+  hide($("viewSign")); show($("viewAdmin"));
+  switchTab("Records");
+}
+function closeAdmin() {
+  ADMIN_PIN = ""; RECORDS = []; ROSTER = [];
+  hide($("viewAdmin")); show($("viewSign"));
+  requestAnimationFrame(() => { padW = 0; resizePad(); });
+}
+$("btnAdminClose").addEventListener("click", closeAdmin);
+
+/* ----- 탭 ----- */
+function switchTab(name) {
+  ["Records", "Roster", "Settings"].forEach((t) => {
+    $("tab" + t).classList.toggle("hidden", t !== name);
+  });
+  document.querySelectorAll(".tab").forEach((b) => b.classList.toggle("on", b.getAttribute("data-tab") === name));
+}
+document.querySelectorAll(".tab").forEach((b) => b.addEventListener("click", () => switchTab(b.getAttribute("data-tab"))));
+
+function todayStr() {
+  const d = new Date(); const p = (n) => String(n).padStart(2, "0");
+  return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate());
+}
+
+/* ----- 데이터 적재 ----- */
+function loadAdmin(res, fillForms) {
+  RECORDS = res.records || [];
+  ROSTER = res.roster || [];
+  SCHOOLS = res.schools || [];
+  SETTINGS = res.settings || {};
+
+  const dates = Array.from(new Set(RECORDS.map((r) => r.date))).sort().reverse();
+  const prev = $("dateSel").value;
+  const today = todayStr();
+  if (dates.indexOf(today) === -1) dates.unshift(today);
+  const sel = $("dateSel"); sel.innerHTML = "";
+  dates.forEach((d) => { const o = document.createElement("option"); o.value = d; o.textContent = d; sel.appendChild(o); });
+  const latestWithRecords = RECORDS.map((r) => r.date).sort().pop();
+  const todayHasRecords = RECORDS.some((r) => r.date === today);
+  sel.value = dates.indexOf(prev) !== -1 ? prev : (todayHasRecords || !latestWithRecords ? today : latestWithRecords);
+
+  if (FILTER_SCHOOL && allSchools().indexOf(FILTER_SCHOOL) === -1) FILTER_SCHOOL = "";
+  if (fillForms) { fillSettingsForm(); }
+  $("schoolsBox").value = SCHOOLS.join("\n");
+  renderRecords();
+  renderRosterSummary();
+}
+
+function allSchools() {
+  const list = SCHOOLS.slice();
+  RECORDS.forEach((r) => { if (list.indexOf(r.school) === -1) list.push(r.school); });
+  ROSTER.forEach((r) => { if (list.indexOf(r.school) === -1) list.push(r.school); });
+  return list;
+}
+function currentRows() {
+  const d = $("dateSel").value;
+  return RECORDS.filter((r) => r.date === d);
+}
+function rosterBy(school) { return ROSTER.filter((r) => r.school === school); }
+function signedIndex(rows, school) {
+  const idx = {};
+  rows.filter((r) => r.school === school).forEach((r) => { const k = norm(r.name); if (!idx[k]) idx[k] = r; });
+  return idx;
+}
+
+/* ----- 서명 기록 탭 ----- */
+function typeSummary(rows) {
+  const st = rows.filter((r) => r.type === "학생").length;
+  const pa = rows.filter((r) => r.type === "학부모").length;
+  return st || pa ? " (학생 " + st + " · 학부모 " + pa + ")" : "";
+}
+function renderRecords() {
+  const rows = currentRows();
+  $("totalText").textContent = "총 " + rows.length + "명" + typeSummary(rows);
+
+  const schools = allSchools();
+  const chips = $("chips"); chips.innerHTML = "";
+  const all = document.createElement("button");
+  all.className = "chip" + (FILTER_SCHOOL === "" ? " on" : "");
+  all.innerHTML = "전체<b>" + rows.length + (ROSTER.length ? "/" + ROSTER.length : "") + "</b>";
+  all.onclick = () => { FILTER_SCHOOL = ""; renderRecords(); };
+  chips.appendChild(all);
+  schools.forEach((s) => {
+    const signed = rows.filter((r) => r.school === s).length;
+    const ros = rosterBy(s).length;
+    const c = document.createElement("button");
+    c.className = "chip" + (FILTER_SCHOOL === s ? " on" : "");
+    c.innerHTML = esc(s) + "<b>" + signed + (ros ? "/" + ros : "") + "</b>";
+    c.onclick = () => { FILTER_SCHOOL = s; renderRecords(); };
+    chips.appendChild(c);
+  });
+
+  // 미서명자
+  const mb = $("missingBox");
+  if (FILTER_SCHOOL && rosterBy(FILTER_SCHOOL).length) {
+    const idx = signedIndex(rows, FILTER_SCHOOL);
+    const missing = rosterBy(FILTER_SCHOOL).filter((e) => !idx[norm(e.name)]).map((e) => e.name);
+    mb.innerHTML = missing.length
+      ? "<b>미서명 " + missing.length + "명</b> · " + esc(missing.join(", "))
+      : "<b>명단의 모든 분이 서명했어요 🎉</b>";
+    show(mb);
+  } else {
+    hide(mb);
+  }
+
+  const shown = FILTER_SCHOOL ? rows.filter((r) => r.school === FILTER_SCHOOL) : rows;
+  const body = $("listBody"); body.innerHTML = "";
+  if (!shown.length) {
+    body.innerHTML = '<tr><td colspan="7" class="muted" style="text-align:center;padding:24px">서명 기록이 없어요.</td></tr>';
+    return;
+  }
+  shown.forEach((r, i) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML =
+      "<td>" + (i + 1) + "</td><td>" + (esc(r.type) || "-") + "</td><td>" + esc(r.school) + "</td><td>" + esc(r.name) + "</td>" +
+      "<td>" + (isImg(r.sig) ? '<img alt="서명" src="' + esc(r.sig) + '">' : "-") + "</td>" +
+      "<td>" + esc(String(r.time).slice(11, 16)) + "</td>" +
+      '<td><button class="btn small danger" data-id="' + esc(r.id) + '">삭제</button></td>';
+    body.appendChild(tr);
+  });
+  body.querySelectorAll("button[data-id]").forEach((b) => {
+    b.onclick = async () => {
+      if (!confirm("이 서명 기록을 삭제할까요?")) return;
+      b.disabled = true;
+      try {
+        const res = await apiPost({ action: "delete", pin: ADMIN_PIN, id: b.getAttribute("data-id") });
+        if (res.ok) await refresh(); else alert(res.error || "삭제에 실패했어요.");
+      } catch (e) { alert("연결에 실패했어요."); }
+      b.disabled = false;
+    };
+  });
+}
+
+async function refresh(fillForms) {
+  try {
+    const res = await apiPost({ action: "list", pin: ADMIN_PIN });
+    if (res.ok) loadAdmin(res, !!fillForms); else alert(res.error || "불러오지 못했어요.");
+  } catch (e) { alert("연결에 실패했어요."); }
+}
+$("btnRefresh").addEventListener("click", () => refresh(false));
+$("dateSel").addEventListener("change", () => { FILTER_SCHOOL = ""; renderRecords(); });
+
+/* ----- 명단 · 학교 탭 ----- */
+function renderRosterSummary() {
+  const body = $("rosterBody"); body.innerHTML = "";
+  const counts = {};
+  ROSTER.forEach((r) => { counts[r.school] = (counts[r.school] || 0) + 1; });
+  const list = allSchools().filter((s) => counts[s]);
+  $("rosterSummaryText").textContent = ROSTER.length
+    ? "총 " + ROSTER.length + "명 · " + list.length + "개 학교가 등록되어 있어요."
+    : "아직 등록된 명단이 없어요. 명단 없이 이름을 직접 입력받는 방식으로도 쓸 수 있어요.";
+  if (!list.length) {
+    body.innerHTML = '<tr><td colspan="2" class="muted" style="text-align:center;padding:18px">등록된 명단이 없어요.</td></tr>';
+    return;
+  }
+  list.forEach((s) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = "<td>" + esc(s) + "</td><td>" + counts[s] + "명</td>";
+    body.appendChild(tr);
+  });
+}
+
+/* 엑셀 양식 */
+$("btnTemplate").addEventListener("click", () => {
+  if (!window.XLSX) { alert("엑셀 라이브러리를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요."); return; }
+  const aoa = [["학교", "성명"], ["가나초등학교", "홍길동"], ["가나초등학교", "김영희"], ["다라초등학교", "이철수"]];
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  ws["!cols"] = [{ wch: 24 }, { wch: 14 }];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "명단");
+  XLSX.writeFile(wb, "명단_양식.xlsx");
+});
+
+/* 엑셀 읽기 */
+function parseRoster(aoa) {
+  if (!aoa || !aoa.length) return [];
+  const head = (aoa[0] || []).map((v) => String(v == null ? "" : v).trim());
+  let si = head.findIndex((h) => h.indexOf("학교") !== -1);
+  let ni = head.findIndex((h) => h.indexOf("성명") !== -1 || h.indexOf("이름") !== -1);
+  let start = 1;
+  if (si === -1 || ni === -1 || si === ni) { si = 0; ni = 1; start = 0; } // 머리글이 없으면 1열=학교, 2열=성명
+  const out = [];
+  for (let i = start; i < aoa.length; i++) {
+    const row = aoa[i] || [];
+    const school = String(row[si] == null ? "" : row[si]).trim();
+    const name = String(row[ni] == null ? "" : row[ni]).trim();
+    if (school && name) out.push({ school: school, name: name });
+  }
+  return out;
+}
+
+$("xlsFile").addEventListener("change", (e) => {
+  const file = e.target.files && e.target.files[0];
+  IMPORT_ROWS = [];
+  hide($("importMode")); hide($("importPreview"));
+  if (!file) return;
+  if (!window.XLSX) { alert("엑셀 라이브러리를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요."); return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const bytes = new Uint8Array(reader.result);
+      let wb;
+      if (/\.csv$/i.test(file.name)) {
+        // CSV는 UTF-8을 먼저 시도하고, 한글 엑셀의 기본 CSV(EUC-KR)면 그 방식으로 다시 읽어요.
+        let text;
+        try { text = new TextDecoder("utf-8", { fatal: true }).decode(bytes); }
+        catch (e) { text = new TextDecoder("euc-kr").decode(bytes); }
+        wb = XLSX.read(text.replace(/^﻿/, ""), { type: "string" });
+      } else {
+        wb = XLSX.read(bytes, { type: "array" });
+      }
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: "" });
+      IMPORT_ROWS = parseRoster(aoa);
+      const pv = $("importPreview");
+      if (!IMPORT_ROWS.length) {
+        pv.textContent = "읽은 명단이 없어요. 첫 시트에 ‘학교’, ‘성명’ 열이 있는지 확인해 주세요.";
+        show(pv); return;
+      }
+      const schools = Array.from(new Set(IMPORT_ROWS.map((r) => r.school)));
+      const sample = IMPORT_ROWS.slice(0, 5).map((r) => "· " + r.school + " / " + r.name).join("\n");
+      pv.textContent = IMPORT_ROWS.length + "명 (" + schools.length + "개 학교)을 읽었어요.\n" + sample + (IMPORT_ROWS.length > 5 ? "\n…" : "");
+      show(pv); show($("importMode"));
+    } catch (err) {
+      $("importPreview").textContent = "파일을 읽지 못했어요. 엑셀 형식인지 확인해 주세요. (" + err.message + ")";
+      show($("importPreview"));
+    }
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+$("btnImport").addEventListener("click", async () => {
+  if (!IMPORT_ROWS.length) return;
+  const mode = document.querySelector('input[name="imode"]:checked').value;
+  if (mode === "replace" && !confirm("기존 명단을 모두 지우고 이 파일로 대체할까요?")) return;
+  const btn = $("btnImport"); btn.disabled = true; btn.textContent = "등록 중...";
+  try {
+    const res = await apiPost({ action: "roster_import", pin: ADMIN_PIN, rows: IMPORT_ROWS, mode: mode });
+    if (res.ok) {
+      let msg = res.added + "명을 등록했어요.";
+      if (res.skipped) msg += "\n(중복·형식 오류 " + res.skipped + "건은 건너뛰었어요)";
+      if (res.newSchools && res.newSchools.length) msg += "\n학교 목록에 추가: " + res.newSchools.join(", ");
+      alert(msg);
+      IMPORT_ROWS = []; $("xlsFile").value = ""; hide($("importMode")); hide($("importPreview"));
+      await refresh(false);
+      try { CONFIG = await apiGet("config"); } catch (e) { /* 무시 */ }
+    } else {
+      alert(res.error || "등록에 실패했어요.");
+    }
+  } catch (e) { alert("연결에 실패했어요."); }
+  btn.disabled = false; btn.textContent = "명단 등록하기";
+});
+
+$("btnRosterClear").addEventListener("click", async () => {
+  if (!ROSTER.length) { alert("삭제할 명단이 없어요."); return; }
+  if (!confirm("등록된 명단 " + ROSTER.length + "명을 모두 삭제할까요? (서명 기록은 그대로 남아요)")) return;
+  try {
+    const res = await apiPost({ action: "roster_clear", pin: ADMIN_PIN });
+    if (res.ok) await refresh(false); else alert(res.error || "삭제에 실패했어요.");
+  } catch (e) { alert("연결에 실패했어요."); }
+});
+
+$("btnSchoolsSave").addEventListener("click", async () => {
+  const list = $("schoolsBox").value.split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+  if (!list.length) { alert("학교를 한 곳 이상 입력해 주세요."); return; }
+  const btn = $("btnSchoolsSave"); btn.disabled = true;
+  try {
+    const res = await apiPost({ action: "schools_save", pin: ADMIN_PIN, schools: list });
+    if (res.ok) {
+      alert("학교 목록을 저장했어요.");
+      await refresh(false);
+      try { CONFIG = await apiGet("config"); } catch (e) { /* 무시 */ }
+    } else alert(res.error || "저장에 실패했어요.");
+  } catch (e) { alert("연결에 실패했어요."); }
+  btn.disabled = false;
+});
+
+/* ----- 설정 탭 ----- */
+function fillSettingsForm() {
+  $("setTitle").value = SETTINGS.title || "";
+  $("setSubtitle").value = SETTINGS.subtitle || "";
+  $("setNotice").value = SETTINGS.notice || "";
+  $("setStart").value = SETTINGS.start || "";
+  $("setEnd").value = SETTINGS.end || "";
+  $("setTypeSelect").checked = SETTINGS.typeSelect !== false;
+  $("setDup").checked = !!SETTINGS.dupBlock;
+  $("setRosterCheck").checked = !!SETTINGS.rosterCheck;
+  $("setNewPin").value = "";
+  $("settingsErr").textContent = "";
+}
+$("btnClearTime").addEventListener("click", () => { $("setStart").value = ""; $("setEnd").value = ""; });
+
+$("btnSettingsSave").addEventListener("click", async () => {
+  const err = $("settingsErr"); err.textContent = "";
+  const s = {
+    title: $("setTitle").value, subtitle: $("setSubtitle").value, notice: $("setNotice").value,
+    start: $("setStart").value, end: $("setEnd").value,
+    dupBlock: $("setDup").checked, rosterCheck: $("setRosterCheck").checked, typeSelect: $("setTypeSelect").checked,
+    newPin: $("setNewPin").value
+  };
+  if (s.start && s.end && s.start >= s.end) { err.textContent = "서명 종료 시각은 시작 시각보다 뒤여야 해요."; return; }
+  if (s.newPin && s.newPin.length < 4) { err.textContent = "새 비밀번호는 4자 이상으로 입력해 주세요."; return; }
+  const btn = $("btnSettingsSave"); btn.disabled = true; btn.textContent = "저장 중...";
+  try {
+    const res = await apiPost({ action: "settings_save", pin: ADMIN_PIN, settings: s });
+    if (res.ok) {
+      if (res.pinChanged) ADMIN_PIN = s.newPin;
+      alert("설정을 저장했어요." + (res.pinChanged ? "\n관리자 비밀번호도 바뀌었어요." : ""));
+      await refresh(true);
+      try { CONFIG = await apiGet("config"); } catch (e) { /* 무시 */ }
+    } else {
+      err.textContent = res.error || "저장에 실패했어요.";
+    }
+  } catch (e) { err.textContent = "연결에 실패했어요."; }
+  btn.disabled = false; btn.textContent = "설정 저장";
+});
+
+/* =========================================================
+   등록부 인쇄
+   ========================================================= */
+$("btnPrint").addEventListener("click", () => {
+  const rows = currentRows();
+  const rosterScope = FILTER_SCHOOL ? rosterBy(FILTER_SCHOOL).length : ROSTER.length;
+  if (!rows.length && !rosterScope) { alert("선택한 날짜에 서명 기록이 없어요."); return; }
+  $("printScope").textContent = "대상: " + (FILTER_SCHOOL || "전체 학교") + " · " + $("dateSel").value;
+  const rosterRadio = document.querySelector('input[name="pmode"][value="roster"]');
+  const signedRadio = document.querySelector('input[name="pmode"][value="signed"]');
+  rosterRadio.disabled = !rosterScope;
+  $("lblRosterMode").classList.toggle("disabled", !rosterScope);
+  if (!rosterScope) signedRadio.checked = true;
+  show($("printModal"));
+});
+$("printCancel").addEventListener("click", () => hide($("printModal")));
+
+function byKo(a, b) { return String(a.name).localeCompare(String(b.name), "ko"); }
+
+function buildPrintHtml(opts) {
+  const rows = currentRows();
+  const title = (CONFIG && CONFIG.title) || (SETTINGS && SETTINGS.title) || "학교설명회";
+  const date = $("dateSel").value;
+  const showType = SETTINGS.typeSelect !== false || rows.some((r) => r.type);
+  const schools = (FILTER_SCHOOL ? [FILTER_SCHOOL] : allSchools()).filter((s) =>
+    rows.some((r) => r.school === s) || (opts.mode === "roster" && rosterBy(s).length)
+  );
+
+  let html = "";
+  schools.forEach((s) => {
+    const signed = rows.filter((r) => r.school === s);
+    const ros = rosterBy(s);
+    const idx = signedIndex(rows, s);
+
+    let list;
+    if (opts.mode === "roster" && ros.length) {
+      list = ros.map((e) => { const r = idx[norm(e.name)] || {}; return { name: e.name, sig: r.sig || "", type: r.type || "" }; });
+      const inRoster = {}; ros.forEach((e) => { inRoster[norm(e.name)] = true; });
+      const extras = signed.filter((r) => !inRoster[norm(r.name)]).map((r) => ({ name: r.name, sig: r.sig, type: r.type || "", extra: true }));
+      if (opts.sort === "name") list.sort(byKo);
+      if (opts.sort === "name") extras.sort(byKo);
+      list = list.concat(extras);
+    } else {
+      list = signed.map((r) => ({ name: r.name, sig: r.sig, type: r.type || "" }));
+      if (opts.sort === "name") list.sort(byKo);
+    }
+    if (!list.length) return;
+
+    let rateText = "";
+    if (opts.rate && ros.length) {
+      const n = ros.filter((e) => idx[norm(e.name)]).length;
+      rateText = "명단 " + ros.length + "명 중 " + n + "명 서명 (" + Math.round(n / ros.length * 100) + "%)";
+    }
+
+    html += '<section class="p-page"><h1>' + esc(title) + " 서명등록부</h1>" +
+      '<div class="p-sub">' + esc(date) + "</div>" +
+      '<div class="p-school">학교: ' + esc(s) + "</div>" +
+      (rateText ? '<div class="p-rate">' + esc(rateText) + "</div>" : "") +
+      tableHtml(list, opts.cols, showType) +
+      '<div class="p-total">서명 ' + signed.length + "명" + typeSummary(signed) + "</div></section>";
+  });
+  return html;
+}
+
+function tableHtml(list, cols, showType) {
+  // 열 너비: 서명 칸이 남는 폭을 모두 차지해요.
+  const w = cols === 2
+    ? (showType ? { n: "6%", t: "9%", nm: "14%" } : { n: "7%", t: "0", nm: "16%" })
+    : (showType ? { n: "8%", t: "12%", nm: "22%" } : { n: "10%", t: "0", nm: "26%" });
+  const head = '<th style="width:' + w.n + '">번호</th>' +
+    (showType ? '<th style="width:' + w.t + '">구분</th>' : "") +
+    '<th style="width:' + w.nm + '">성명</th><th>서명</th>';
+  const emptyCells = "<td></td>" + (showType ? "<td></td>" : "") + "<td></td><td></td>";
+  const cell = (r, no) => {
+    if (!r) return emptyCells;
+    return "<td>" + no + "</td>" +
+      (showType ? "<td>" + esc(r.type || "") + "</td>" : "") +
+      '<td class="' + (r.extra ? "extra" : "") + '">' + esc(r.name) + (r.extra ? "<small>(명단 외)</small>" : "") + "</td>" +
+      '<td class="sig">' + (isImg(r.sig) ? '<img alt="" src="' + esc(r.sig) + '">' : "") + "</td>";
+  };
+  const half = cols === 2 ? Math.ceil(list.length / 2) : list.length;
+  let h = '<table class="p-table"><thead><tr>' + head + (cols === 2 ? head : "") + "</tr></thead><tbody>";
+  for (let i = 0; i < half; i++) {
+    h += "<tr>" + cell(list[i], i + 1) + (cols === 2 ? cell(list[i + half], i + half + 1) : "") + "</tr>";
+  }
+  return h + "</tbody></table>";
+}
+
+$("printGo").addEventListener("click", () => {
+  const opts = {
+    mode: document.querySelector('input[name="pmode"]:checked').value,
+    cols: parseInt(document.querySelector('input[name="pcols"]:checked').value, 10),
+    sort: document.querySelector('input[name="psort"]:checked').value,
+    rate: $("pRate").checked
+  };
+  const html = buildPrintHtml(opts);
+  if (!html) { alert("출력할 서명 기록이 없어요."); return; }
+  hide($("printModal"));
+  $("printArea").innerHTML = html;
+  const imgs = Array.from($("printArea").querySelectorAll("img"));
+  Promise.all(imgs.map((im) => (im.complete ? Promise.resolve() : new Promise((r) => { im.onload = im.onerror = r; }))))
+    .then(() => window.print());
+});
+
+/* ---------- 공유 QR ---------- */
+function shareUrl() {
+  return location.origin + location.pathname + location.search;
+}
+$("btnQr").addEventListener("click", () => {
+  const url = shareUrl();
+  $("qrUrl").textContent = url;
+  const box = $("qrcode"); box.innerHTML = "";
+  if (window.QRCode) {
+    new QRCode(box, { text: url, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M });
+  } else {
+    box.textContent = "QR 라이브러리를 불러오지 못했어요. 아래 링크를 복사해 사용해 주세요.";
+  }
+  show($("qrModal"));
+});
+$("qrClose").addEventListener("click", () => hide($("qrModal")));
+$("qrCopy").addEventListener("click", async () => {
+  try { await navigator.clipboard.writeText(shareUrl()); $("qrCopy").textContent = "복사됨!"; }
+  catch (e) { prompt("아래 링크를 복사해 주세요", shareUrl()); }
+  setTimeout(() => { $("qrCopy").textContent = "링크 복사"; }, 1500);
+});
+
+init();
+</script>
+</body>
+</html>
